@@ -1,81 +1,95 @@
-# MME-SCI: A Comprehensive and Challenging Science Benchmark for Multimodal Large Language Models
+# MME-SCI: A Comprehensive Science Benchmark for Multimodal Large Language Models
 
-This repository contains the code and resources for the MME-SCI benchmark, designed to evaluate the performance of multimodal large language models on science-related tasks.
+Welcome to the MME-SCI repository! This benchmark is designed to rigorously evaluate the performance of multimodal large language models (MLLMs) on science-related tasks, providing a comprehensive testbed for assessing model capabilities in understanding and reasoning about scientific content across text and visual modalities.
 
 
-## 0. Environment Setup
+## 🚀 Getting Started
 
-To get started, set up the required environment using the following commands:
+Follow these steps to set up your environment and start using the MME-SCI benchmark.
+
+### Environment Setup
+
+First, configure the required dependencies using Conda:
 
 ```bash
 # Navigate to the project root directory
 cd MME_SCI/
 
-# Create a conda environment with Python 3.10
+# Create a dedicated Conda environment with Python 3.10
 conda create -n mmesci python=3.10 -y
 
 # Activate the environment
 conda activate mmesci
 
-# Install dependencies
+# Install required packages
 pip install -r requirements.txt
 ```
 
 
-## 1. Benchmark Data
+## 📊 Benchmark Data
 
-The MME-SCI benchmark could be download from [huggingface](https://github.com/JCruan519/MME-SCI)
+The MME-SCI benchmark dataset is publicly available on Hugging Face Datasets. You can download it here:
+
+- **Dataset Link**: [huggingface.co/datasets/JCruan/MME-SCI](https://huggingface.co/datasets/JCruan/MME-SCI)
 
 
-## 2. Model Deployment
+## 🖥️ Model Deployment
 
-Evaluation on the MME-SCI benchmark relies on **vllm**. For detailed documentation, refer to the [url](https://github.com/vllm-project/vllm).
+Evaluation on MME-SCI requires deploying your model using **vllm** (a high-throughput LLM serving library). For full details, see the [vllm documentation](https://github.com/vllm-project/vllm).
 
-**NOTE**: The `--limit-mm-per-prompt` parameter of vllm should be set to 6.
+> ⚠️ **Critical Note**: Set `--limit-mm-per-prompt` to `6` when deploying with vllm to ensure compatibility with the benchmark.
 
 ### Example Deployment Command
 
-Deploy a model (e.g., Qwen2.5-VL-7B-Instruct) with the following configuration:
+Here’s how to deploy a model (e.g., Qwen2.5-VL-7B-Instruct) for evaluation:
 
 ```bash
-# Specify the model name/path
+# Specify the model name/path (supports Hugging Face Hub IDs or local paths)
 MODEL=Qwen/Qwen2.5-VL-7B-Instruct
 
-# Set visible GPUs (adjust based on your hardware)
+# Set visible GPUs (adjust based on your hardware configuration)
 export CUDA_VISIBLE_DEVICES=0,1,2,3 
 
-# Launch the VLLM server
+# Launch the vllm server with optimal settings
 vllm serve $MODEL \
-    --port 12453 \                  # Port for the API server
-    --api-key token-abc123 \        # API key for authentication
-    --dtype auto \                  
-    --served-model-name qwen2_5_vl_7b_vllm \  # Name used to reference the model in API calls
-    --gpu-memory-utilization 0.9 \ 
-    --trust-remote-code \           
-    --tensor-parallel-size 4 \  
-    --limit-mm-per-prompt image=6   # Maximum number of images per prompt
+    --port 12453 \                  # Port for API access
+    --api-key token-abc123 \        # Authentication key (customize as needed)
+    --dtype auto \                  # Automatically select data type (e.g., float16, bfloat16)
+    --served-model-name qwen2_5_vl_7b_vllm \  # Model name for API references
+    --gpu-memory-utilization 0.9 \  # Allocate 90% of GPU memory (adjust for your setup)
+    --trust-remote-code \           # Trust code from the model repository
+    --tensor-parallel-size 4 \      # Number of GPUs for tensor parallelism
+    --limit-mm-per-prompt image=6   # Required: Allow up to 6 images per prompt
 ```
 
 
-## 3. Running Evaluation
+## 📈 Running Evaluation
 
-Once the model is deployed, follow these steps to run the evaluation:
+Once your model is deployed, follow these steps to run the full evaluation pipeline.
 
 ### Preparations
-Modify the **API-related parameters** (e.g., model name, port, API key) in the following files to match your deployed model:
-   - `vllm_localapi_eval.py`
-   - `get_judge_res.py`
-   - `run_vllm_api_eval_with_metrices.sh`
+
+Before starting, update the **API configuration** in the following files to match your deployed model:
+- `vllm_localapi_eval.py`
+- `get_judge_res.py`
+- `run_vllm_api_eval_with_metrices.sh`
+
+Adjust parameters like `model name`, `port`, and `API key` to ensure connectivity with your vllm server.
 
 ### One-Stop Evaluation
-Execute the evaluation script to run the full benchmark pipeline:
+
+Run the following script to execute the complete evaluation pipeline, including data processing, model querying, and metric calculation:
 
 ```bash
 # Navigate to the evaluation directory
 cd model_eval/
 
-# Run the evaluation script
+# Execute the evaluation script
 bash run_vllm_api_eval_with_metrices.sh
 ```
 
 This script will automatically process the data, query the deployed model, and compute evaluation metrics for the MME-SCI benchmark.
+
+## 📧 Contact
+
+If you encounter issues or have questions, feel free to open an issue in the repository or contact the maintainers (jackchenruan@sjtu.edu.cn).
