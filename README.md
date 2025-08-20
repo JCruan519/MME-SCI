@@ -2,6 +2,7 @@
 
 Welcome to the MME-SCI repository! This benchmark is designed to rigorously evaluate the performance of multimodal large language models (MLLMs) on science-related tasks, providing a comprehensive testbed for assessing model capabilities in understanding and reasoning about scientific content across text and visual modalities.
 
+[[📖 arXiv Paper](https://arxiv.org/pdf/2508.13938)] [[📊 Dataset](https://huggingface.co/datasets/JCruan/MME-SCI)]
 
 ## 🚀 Getting Started
 
